@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+import json
 import matplotlib as mpl
 import numpy as np
 from langchain_core.tools import tool
@@ -16,6 +17,10 @@ def analyze_stocks(stock_codes):
         股票代码列表
     """
 
+    # 兼容LLM可能传入JSON字符串的情况
+    if isinstance(stock_codes, str):
+        stock_codes = json.loads(stock_codes)
+
     start_date='20240422'
     end_date='20250422'
 
@@ -25,7 +30,7 @@ def analyze_stocks(stock_codes):
     mpl.rcParams['font.family'] = 'sans-serif'
     
     # 读取数据
-    data_path = os.path.join('D:\\workspace\\python\\akshare\\code06\\data', 'all_data.csv')
+    data_path = os.path.join('/Users/changwenbiao/AIAgent/akshare/code06/data', 'all_data.csv')
     df = pd.read_csv(data_path)
     
     # 转换日期格式
@@ -44,6 +49,8 @@ def analyze_stocks(stock_codes):
     # 为每个股票代码进行分析
     for stock_code in stock_codes:
         try:
+            # 统一转为6位零填充字符串，避免LLM传整数导致类型不匹配
+            stock_code = str(stock_code).zfill(6)
             # 筛选股票数据
             print("------stock_code-------")
             print(stock_code)
@@ -144,9 +151,8 @@ if __name__ == '__main__':
     # 示例使用
     try:
         stock_codes = ['600600','300054','600698','600573']  # 可以替换为您想要分析的股票代码列表
-        results = analyze_stocks(stock_codes)
+        results = analyze_stocks.invoke({"stock_codes": stock_codes})
         print("\n分析结果:")
         print(results)
     except Exception as e:
         print(f"错误: {str(e)}")
-

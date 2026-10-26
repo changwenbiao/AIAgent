@@ -1,6 +1,7 @@
 from langchain_core.tools import tool
 import pandas as pd
 import os
+import json
 
 @tool
 def get_financial_report(stock_codes):
@@ -17,8 +18,12 @@ def get_financial_report(stock_codes):
     dict
         包含每个股票代码对应的财报数据的字典
     """
+    # 兼容LLM可能传入JSON字符串的情况
+    if isinstance(stock_codes, str):
+        stock_codes = json.loads(stock_codes)
+
     # 确保数据目录存在
-    data_dir = 'D:/workspace/python/akshare/code06/data'
+    data_dir = '/Users/changwenbiao/AIAgent/akshare/code06/data'
     os.makedirs(data_dir, exist_ok=True)
     
     try:
@@ -59,15 +64,19 @@ def load_data():
     import akshare as ak
     import pandas as pd
 
+    data_dir = '/Users/changwenbiao/AIAgent/akshare/code06/data'
+    os.makedirs(data_dir, exist_ok=True)
+
     df = ak.stock_yjbb_em(date="20241231")
 
-    df.to_csv('financial_report.csv')
+    df.to_csv(os.path.join(data_dir, 'financial_report.csv'))
 
 # 示例使用
 if __name__ == "__main__":
+    # load_data()
     # 测试用的股票代码列表
     test_codes = ['600600','002461','000729','600573']
-    result = get_financial_report(test_codes)
+    result = get_financial_report.invoke({"stock_codes": test_codes})
     
     if result:
         # 打印结果

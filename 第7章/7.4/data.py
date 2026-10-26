@@ -13,7 +13,7 @@ async def save_data(codes:List[str], start_date:str, end_date:str,prefix:str):
      for r in ret:
          all_data=pd.concat([all_data, r],axis=0)
      filename="{} {}_{}.csv".format(prefix,start_date,end_date)
-     all_data.to_csv("D:\\workspace\\python\\akshare\\code05\\data\\{}".format(filename))
+     all_data.to_csv("/Users/changwenbiao/AIAgent/akshare/code05/data/{}".format(filename))
      print("保存所有日线数据完成,文件名是:{}".format(filename))
 
 async def load_data(symbol, start_date, end_date):
